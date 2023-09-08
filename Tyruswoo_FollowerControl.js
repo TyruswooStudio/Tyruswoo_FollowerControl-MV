@@ -3,7 +3,7 @@
 // by Tyruswoo
 //
 // Be sure to save as:
-// TYR_FollowerControl.js
+// Tyruswoo_FollowerControl.js
 //=============================================================================
 
 /*
@@ -37,13 +37,13 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v1.10.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v1.9.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update:  June 23, 2019
+ * Last Update:  8 March 2019
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
@@ -331,60 +331,9 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *          finds the straightest path, and will always yield the same result
  *          every time. (This is different from the "Approach" movement type,
  *          which has randomness, producing variability.)
- *
- * v1.10  June 23, 2019:
- *        Added feature:
- *        - A new plugin command was added, which allows switching the
- *          image of the currently selected follower, based on the currently
- *          selected follower's default image.
- *        - To use poses, you first need to create the appropriately named
- *          pose image files. Then, you can call those files for your
- *          follower at any time. The follower's default image will be used
- *          to determine what their poses can be.
- *        - You can create an infinite number of your own poses! To create a
- *          pose, you need to have the default image file for the character,
- *          and then create another image file with an underscore added at
- *          the end, followed by the name of the pose (in lowercase letters).
- *          For example, if our character's default image is:
- *
- *                $McKathlinIsAwesome.png
- *
- *          Then our pose image for a wink should be named:
- *
- *                $McKathlinIsAwesome_wink.png
- *
- *          Or, our pose image for that character's wounded image should be:
- *
- *                $McKathlinIsAwesome_wounded.png
- *
- *          And likewise for any other pose images for that character. You can
- *          have as many poses as you want! There is no maximum.
- *
- *          Important Note: The poses must all have the same index value as the
- *          default pose. In other words, the pose images must be the same size
- *          as the default image, with the pose at the same position within the
- *          image file.
- *        - For example, if we want to make a certain follower wink, we first
- *          select the follower. Then, make that follower change to a wink
- *          pose:
- *
- *                Follower Pose wink
- *
- *          Have the follower hold the pose for a moment or say something, etc,
- *          then return the follower to a default pose. There are several ways
- *          to do this, and all are equivalent:
- *
- *                Follower Pose default
- *                Follower Pose normal
- *                Follower Pose none
- *                Follower Pose stand
- *                Follower Pose standing
- *                
- *          All of the above plugin commands do the same thing of returning
- *          the follower to their default pose.
  * 
- * v1.10.1  September 7, 2023:
- *          This plugin is now free and open source under the MIT license.
+ * v1.9.1  September 7, 2023:
+ *         This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
  *
@@ -570,35 +519,6 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 				}
 				if(!follower_found) {
 					console.log("Follower: Error! Unable to find a follower named", follower_name);
-				}
-				break;
-			case 'POSE':
-				var actor = this._follower._memberIndex > 0 ? $gameParty.members()[this._follower._memberIndex] : $gameParty.members()[0];
-				var actorId = actor ? actor.actorId() : 0;
-				if(actorId) {
-					if(!$gameActors.actor(actorId)._characterNameCore) {
-						$gameActors.actor(actorId)._characterNameCore = $gameActors.actor(actorId).actor().characterName;
-					}
-					var core = $gameActors.actor(actorId)._characterNameCore;
-					var pose = core;
-					if(args[1]) {
-						var arg1 = args[1].toLowerCase();
-						switch(arg1) {
-							case "stand":
-							case "standing":
-							case "default":
-							case "normal":
-							case "none":
-								break;
-							default:
-								pose += "_" + arg1;
-						}
-					}
-					$gameActors.actor(actorId)._characterName = pose;
-					$gamePlayer.refresh();
-					console.log("Follower Pose: Changed actor", actorId, "to pose", pose);
-				} else {
-					console.warn("Follower Pose: Error! No actor ID.");
 				}
 				break;
 			case '0':

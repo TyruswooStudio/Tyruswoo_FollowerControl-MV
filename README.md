@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v1.10.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v1.9.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -26,8 +26,6 @@ Now you can easily make cool cutscenes involving the party's followers and leade
 | `Follower <Name>`           | Target follower associated with actor named <Name> |
 | `Follower Variable <varId>` | Target follower based on value of a variable       |
 | `Follower Actor <actorId>`  | Target follower associated with actor `<actorId>`  |
-| `Follower Pose <poseName>`  | Change the current follower's pose                 |
-| `Follower Pose default`     | Return the current follower's pose to normal       |
 
 For best results, use the above Plugin Commands in combination with
 `Set Move Route` command.  Make cool cutscenes!  :)
@@ -203,62 +201,9 @@ For the term "StopChase", you may type any of these:
      Chase Stop     chase stop     CHASE STOP
 ```
 
-## Follower Pose Commands
-
-The `Follower Pose` switches the image of the currently selected follower,
-based on the currently selected follower's default image.
-
-To use poses, you first need to create the appropriately named
-pose image files. Then, you can call those files for your
-follower at any time. The follower's default image will be used
-to determine what their poses can be.
-
-You can create an infinite number of your own poses! To create a
-pose, you need to have the default image file for the character,
-and then create another image file with an underscore added at
-the end, followed by the name of the pose (in lowercase letters).
-For example, if our character's default image is `$McKathlinIsAwesome.png`,
-then our pose image for a wink should be named `$McKathlinIsAwesome_wink.png`.
-Or, our pose image for that character's wounded image should be
-`$McKathlinIsAwesome_wounded.png`.
-  
-And likewise for any other pose images for that character. You can
-have as many poses as you want! There is no maximum.
-
-**Important Note:** The poses must all have the same index value as the
-default pose. In other words, the pose images must be the same size
-as the default image, with the pose at the same position within the
-image file.
-
-For example, if we want to make a certain follower wink, we first
-select the follower. Then, make that follower change to a wink
-pose:
-
-`Follower Pose wink`
-
-Have the follower hold the pose for a moment or say something, etc,
-then return the follower to a default pose. There are several ways
-to do this, and all are equivalent:
-
-```
-Follower Pose default
-Follower Pose normal
-Follower Pose none
-Follower Pose stand
-Follower Pose standing
-```
-
-All of the above plugin commands do the same thing of returning
-the follower to their default pose.
-
 ## Pathfinding Script Calls
 
-From Version 2.0 onward, pathfinding now allows avoiding obstacles.
-Note that in order for the follower to recgonize obstacles,
-you must also use the Set Move Route command to set Through Off
-prior to the movement. Then, use the Set Move Route command to
-run a Script of the `this.path` function.
-
+Use the Set Move Route command to run a Script of the `this.path` function.
 Each time the script runs, the follower will move **one step** towards its target.
 
 First, select the desired Follower. Then, within the
@@ -384,8 +329,5 @@ Added feature:
   coordinates on the map, to any of the current map's events,
   or to any follower. 
 
-v1.10 - June 23, 2019:
-- Added `Follower Pose` command.
-
-v1.10.1 - September 7, 2023
+v1.9.1 - September 7, 2023
 - This older plugin version is now free and open source under the MIT license.
