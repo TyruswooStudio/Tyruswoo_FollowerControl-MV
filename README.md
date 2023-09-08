@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v1.9.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v1.8.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -201,53 +201,6 @@ For the term "StopChase", you may type any of these:
      Chase Stop     chase stop     CHASE STOP
 ```
 
-## Pathfinding Script Calls
-
-Use the Set Move Route command to run a Script of the `this.path` function.
-Each time the script runs, the follower will move **one step** towards its target.
-
-First, select the desired Follower. Then, within the
-  Set Move Route command, use the script call `this.path` in one of these ways:
-- `this.path(17, 5)` finds the path to x coordinate 17, y coordinate 5.
-- `this.path("event", 3)` finds the path to Event 3 on the current map.
-- `this.path("follower", 2)` finds the path to Follower 2.
-
-For whichever of the above pathing arguments you use,
-the player or follower will only move one step each time
-you call the script. You can use the script as many times
-as you need, in order to make the player or follower step
-toward the target for that many steps.
-- **Note:** This script call also works for events. Just use the script
-  call within Set Move Route.
-- **Note:** This script call has no variability, so it always
-  finds the straightest path, and will always yield the same result
-  every time. (This is different from the "Approach" movement type,
-  which has randomness, producing variability.)
-
-You can use the script call `this.path()` to make a follower move to specific
-coordinates, to a specific event, or to a specific follower.
-
-An excellent feature is that you can use `this.path()` not just on
-Set Move Route of followers, but also on the leader of the player's
-group, or even on any event's Set Move Route command!
-
-If you want to use the previous pathfinding, which did not take
-obstacles into account, you can use scripts such as the following:
-
-Examples of basic pathfinding that does not avoid obstacles:
-
-    this.moveToward(17, 5)
-      This finds the basic path to x coordinate 17, y coordinate 5.
-
-    this.moveToward("event", 3)
-      This finds the basic path to Event 3 on the current map.
-
-    this.moveToward("follower", 2)
-      This finds the basic path to Follower 2.
-
-Remember that each script call moves the character only one tile,
-i.e. only one step.
-
 ## Version History
 
 v1.00 - January 17, 2016:
@@ -322,12 +275,5 @@ Added feature/fixed bug:
   if StopChase is turned back Off, followers will immediately
   be reset to the player's Move Speed.)
 
-v1.09 - March 8, 2019:
-Added feature:
-- Added script call `this.path`, which can be used within the
-  Set Move Route command to make any follower pathfind to any
-  coordinates on the map, to any of the current map's events,
-  or to any follower. 
-
-v1.9.1 - September 7, 2023
+v1.8.1 - September 7, 2023
 - This older plugin version is now free and open source under the MIT license.

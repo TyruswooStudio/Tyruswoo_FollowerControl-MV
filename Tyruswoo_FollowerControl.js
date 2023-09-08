@@ -37,26 +37,17 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v1.9.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v1.8.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update:  8 March 2019
+ * Last Update:  27 Feb. 2019
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
  * on Tyruswoo.com.
- * ===========================================================================
- * Tyruswoo's Follower Control plugin allows greater control of party
- * follower movement.  It allows using these commands on any follower:
- *    - Set Move Route
- *    - Show Balloon Icon
- *    - Show Animation
- *    - Transfer Player
- * Now you can easily make cool cutscenes involving the party's followers
- * and leader!
  * ===========================================================================
  * Plugin commands in brief:
  *    Follower 0          // Target the leader (for Set Move Route of player).
@@ -301,38 +292,8 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *          is moving at the same time. (However, unlike the above qualities,
  *          if StopChase is turned back Off, followers will immediately
  *          be reset to the player's Move Speed.)
- *
- * v1.09  March 8, 2019:
- *        Added feature:
- *        - A new script call was added, which can be used within the
- *          Set Move Route command to make any follower pathfind to any
- *          coordinates on the map, to any of the current map's events,
- *          or to any follower. 
- *        - First, select the desired Follower. Then, within the
- *          Set Move Route command, use one of these scripts:
- *
- *            this.path(17, 5)
- *              This finds the path to x coordinate 17, y coordinate 5.
- *
- *            this.path("event", 3)
- *              This finds the path to Event 3 on the current map.
- *
- *            this.path("follower", 2)
- *              This finds the path to Follower 2.
- *
- *          For whichever of the above pathing arguments you use,
- *          the player or follower will only move one step each time
- *          you call the script. You can use the script as many times
- *          as you need, in order to make the player or follower step
- *          toward the target for that many steps.
- *        - Note: This script call also works for events. Just use the script
- *          call within Set Move Route.
- *        - Note: This script call has no variability, so it always
- *          finds the straightest path, and will always yield the same result
- *          every time. (This is different from the "Approach" movement type,
- *          which has randomness, producing variability.)
  * 
- * v1.9.1  September 7, 2023:
+ * v1.8.1  Sept. 7, 2023:
  *         This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
@@ -580,7 +541,6 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 					this._follower = $gamePlayer;
 					console.log("Follower:  Move Route commands now affect the party Leader.");
 				}
-				break;
 			default:
 				var follower_name = args[0];
 				var len = $gameParty.battleMembers().length;
@@ -724,43 +684,6 @@ Game_Character.prototype.turnTowardCharacter = function(character) {
     } else if (sy !== 0) {
         this.setDirection(sy > 0 ? 8 : 2);
     }
-};
-
-Game_Character.prototype.moveTowardPosition = function(target_x, target_y) {
-    var sx = this.deltaXFrom(target_x);
-    var sy = this.deltaYFrom(target_y);
-    if (Math.abs(sx) > Math.abs(sy)) {
-        this.moveStraight(sx > 0 ? 4 : 6);
-        if (!this.isMovementSucceeded() && sy !== 0) {
-            this.moveStraight(sy > 0 ? 8 : 2);
-        }
-    } else if (sy !== 0) {
-        this.moveStraight(sy > 0 ? 8 : 2);
-        if (!this.isMovementSucceeded() && sx !== 0) {
-            this.moveStraight(sx > 0 ? 4 : 6);
-        }
-    }
-};
-
-Game_Character.prototype.path = function(target_x, target_y) {
-	switch(target_x) {
-		case 'event':
-		case 'Event':
-		case 'EVENT':
-			this.moveTowardCharacter($gameMap.event(target_y));
-			break;
-		case 'follower':
-		case 'Follower':
-		case 'FOLLOWER':
-			if(target_y <= 0) {
-				this.moveTowardPlayer();
-			} else {
-				this.moveTowardCharacter($gamePlayer.followers().follower(target_y - 1));
-			}
-			break;
-		default:
-			this.moveTowardPosition(target_x, target_y);
-	};
 };
 
 //=============================================================================
