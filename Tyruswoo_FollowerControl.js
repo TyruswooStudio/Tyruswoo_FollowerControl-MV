@@ -37,13 +37,13 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v2.0.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v1.11.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update:  January 24, 2020
+ * Last Update:  August 2, 2019
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
@@ -406,77 +406,9 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *
  *          If a player has indeed renamed an actor to be named "SecretCode",
  *          then the follower associated with that actor will be selected.
- *
- *
- * v2.00  January 24, 2020:
- *        This update greatly improves the pathfinding. As previously, you can
- *        use this.path() to make a follower move to specific coordinates,
- *        to a specific event, or to a specific follower. However, now the
- *        pathfinding allows avoiding obstacles. Note that in order for
- *        the follower to recgonize obstacles, you must also use the Set Move
- *        Route command to set Through Off prior to the movement. Then, use the
- *        Set Move Route command to run a Script of the this.path function.
- *       
- *        Examples of smart pathfinding that avoids obstacles:
- *
- *            this.path(17, 5)
- *              This finds the smart path to x coordinate 17, y coordinate 5.
- *
- *            this.path("event", 3)
- *              This finds the smart path to Event 3 on the current map.
- *
- *            this.path("follower", 2)
- *              This finds the smart path to Follower 2.
- *
- *        As previously, note that the follower will only move one step each
- *        time the script runs.
- *
- *        An excellent feature is that you can use this.path() not just on
- *        Set Move Route of followers, but also on the leader of the player's
- *        group, or even on any event's Set Move Route command!
- *
- *        Also importantly, if you use this in any cutscenes, the pathfinding
- *        calculation will remain the same, as long as the obstacles are in
- *        the same places!
- *
- *        You also have control over the pathfinding distance! By default,
- *        RPG Maker MV allows pathfinding of up to 12 tiles, and this is what
- *        is used to pathfind when the player uses the mouse or touchscreen to
- *        move. But, with Follower Control, you can now change the pathfinding
- *        distance for any follower, including the leader of the group, so
- *        you can allow the player to pathfind even farther if you want!
- *        You can also use this to modify how smart enemies are at pathfinding!
- *        Use this script inside a Set Move Route command:
- *
- *            this.pathMax(value)
- *
- *        Where value is how many tiles/steps you want the character to be able
- *        to pathfind around obstacles. For example:
- *
- *            this.pathMax(30)
- *
- *        The above allows pathfinding around obstacles, even if it requires
- *        looking 30 tiles around to find the best path.
- *
- *        If you want to use the previous pathfinding, which did not take
- *        obstacles into account, you can use scripts such as the following:
- *
- *        Examples of basic pathfinding that does not avoid obstacles:
- *
- *            this.moveToward(17, 5)
- *              This finds the basic path to x coordinate 17, y coordinate 5.
- *
- *            this.moveToward("event", 3)
- *              This finds the basic path to Event 3 on the current map.
- *
- *            this.moveToward("follower", 2)
- *              This finds the basic path to Follower 2.
- *
- *        Remember that each script call moves the character only one tile,
- *        i.e. only one step.
  * 
- * v2.0.1  September 4, 2023:
- *         This plugin is now free and open source under the MIT license.
+ * v1.11.1: September 7, 2023:
+ *          This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
  *
@@ -905,36 +837,8 @@ Game_Follower.prototype.isDebugThrough = function() { //This allows followers to
 };
 
 //=============================================================================
-// Game_CharacterBase
-//=============================================================================
-
-
-// Alias method
-Tyruswoo.FollowerControl.Game_CharacterBase_initMembers = Game_CharacterBase.prototype.initMembers;
-Game_CharacterBase.prototype.initMembers = function() {
-	Tyruswoo.FollowerControl.Game_CharacterBase_initMembers.call(this);
-    this._searchLimit = 12; //We define a pathfinding searchLimit variable for each character.
-};
-
-
-Game_CharacterBase.prototype.pathMax = function(value = 12) {
-	if (value && value > 0) {
-		this._searchLimit = value; //Set the searchLimit for this character.
-	} else {
-		this._searchLimit = 12; //Default searchLimit.
-	};
-};
-
-//=============================================================================
 // Game_Character
 //=============================================================================
-
-// Replacement method
-// By default, the searchLimit for pathfinding is always 12.
-// Let us make the searchLimit unique to each character. That way, we can allow a script to change a character's searchLimit.
-Game_Character.prototype.searchLimit = function() {
-	return this._searchLimit;
-};
 
 // Replacement method
 Game_Character.prototype.turnTowardCharacter = function(character) {
@@ -949,7 +853,6 @@ Game_Character.prototype.turnTowardCharacter = function(character) {
     }
 };
 
-// New method
 Game_Character.prototype.moveTowardPosition = function(target_x, target_y) {
     var sx = this.deltaXFrom(target_x);
     var sy = this.deltaYFrom(target_y);
@@ -966,17 +869,14 @@ Game_Character.prototype.moveTowardPosition = function(target_x, target_y) {
     }
 };
 
-// New method
-// This method used to be the path method used in Follower Control v1.09, but has been renamed as moveToward,
-// because the improved path method of Follower Control v2.00 allows for avoiding obstacles.
-Game_Character.prototype.moveToward = function(target_x, target_y) {
+Game_Character.prototype.path = function(target_x, target_y) {
 	switch(target_x) {
-		case 'event': //If target_x is the word 'event', then target_y is the event's ID number.
+		case 'event':
 		case 'Event':
 		case 'EVENT':
 			this.moveTowardCharacter($gameMap.event(target_y));
 			break;
-		case 'follower': //If target_x is the word 'follower', then target_y is the follower's marching order.
+		case 'follower':
 		case 'Follower':
 		case 'FOLLOWER':
 			if(target_y <= 0) {
@@ -985,46 +885,9 @@ Game_Character.prototype.moveToward = function(target_x, target_y) {
 				this.moveTowardCharacter($gamePlayer.followers().follower(target_y - 1));
 			}
 			break;
-		default: //By default, the target_x is an x coordinate on the map, and the target_y is a y coordinate on the map.
+		default:
 			this.moveTowardPosition(target_x, target_y);
 	};
-};
-
-// New method
-// This is the path method as of Follower Control v2.00. This method allows avoiding obstacles.
-// Keep in mind that the character must have Through Off in order to recognize obstacles in pathfinding.
-Game_Character.prototype.path = function(target_x, target_y) {
-	var direction = 0;
-	switch(target_x) {
-		case 'event': //If target_x is the word 'event', then target_y is the event's ID number.
-		case 'Event':
-		case 'EVENT':
-			var targetCharacter = $gameMap.event(target_y);
-			direction = this.findDirectionTo(targetCharacter.x, targetCharacter.y);
-			break;
-		case 'follower': //If target_x is the word 'follower', then target_y is the follower's marching order.
-		case 'Follower':
-		case 'FOLLOWER':
-			if(target_y <= 0) {
-				var targetCharacter = $gamePlayer;
-				direction = this.findDirectionTo(targetCharacter.x, targetCharacter.y);
-			} else {
-				var targetCharacter = $gamePlayer.followers().follower(target_y - 1);
-				direction = this.findDirectionTo(targetCharacter.x, targetCharacter.y);
-			}
-			break;
-		default: //By default, the target_x is an x coordinate on the map, and the target_y is a y coordinate on the map.
-			direction = this.findDirectionTo(target_x, target_y);
-	};
-	if( direction > 0) {
-		this.executeMove(direction);
-	};
-};
-
-// New method
-// This method is modeled on the Game_Player.executeMove function.
-Game_Character.prototype.executeMove = function(direction) {
-    this.moveStraight(direction);
 };
 
 //=============================================================================

@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v2.0.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v1.11.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -305,29 +305,6 @@ An excellent feature is that you can use `this.path()` not just on
 Set Move Route of followers, but also on the leader of the player's
 group, or even on any event's Set Move Route command!
 
-Also importantly, if you use this in any cutscenes, the pathfinding
-calculation will remain the same, as long as the obstacles are in
-the same places!
-
-You also have control over the pathfinding distance! By default,
-RPG Maker MV allows pathfinding of up to 12 tiles, and this is what
-is used to pathfind when the player uses the mouse or touchscreen to
-move. But, with Follower Control, you can now change the pathfinding
-distance for any follower, including the leader of the group, so
-you can allow the player to pathfind even farther if you want!
-You can also use this to modify how smart enemies are at pathfinding!
-Use this script inside a Set Move Route command:
-
-`this.pathMax(value)`
-
-Where value is how many tiles/steps you want the character to be able
-to pathfind around obstacles. For example:
-
-`this.pathMax(30)`
-
-The above allows pathfinding around obstacles, even if it requires
-looking 30 tiles around to find the best path.
-
 If you want to use the previous pathfinding, which did not take
 obstacles into account, you can use scripts such as the following:
 
@@ -434,8 +411,5 @@ Modified feature: There are now two ways to select a follower by
 their name: by their original name as listed in the database,
 or by their current name.
 
-v2.00  January 24, 2020:
-- Significant improvements to pathfinding.
-
-v2.0.1 - September 7, 2023
+v1.11.1 - September 7, 2023
 - This older plugin version is now free and open source under the MIT license.
