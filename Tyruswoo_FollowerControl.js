@@ -500,8 +500,8 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *        Fixed a bug that was causing crashes on save/load in some games.
  *        Ensured that move routes given to nonexistent followers are ignored.
  * 
- * v3.01  September 2, 2023:
- *        This plugin is now free and open source under the MIT license.
+ * v3.0.1  September 7, 2023:
+ *         This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
  *
