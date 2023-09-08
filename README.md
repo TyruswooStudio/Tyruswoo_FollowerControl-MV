@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v2.2.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v2.1.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -442,12 +442,5 @@ v2.1 - April 19, 2020:
   allows you to have more than the default of 4 party members shown in
   the party while the player traverses the map.
 
-v2.2 - Sept. 18, 2020:
-- Fixed a bug in which it was possible to select a absent follower if
-  the current number of party members was less than the max party size.
-  This was not usually noticeable, because such followers are invisible.
-  However, using Show Balloon Icon or Show Animation could cause balloons
-  or animations to appear at the location of an absent follower.
-
-v2.2.1 - September 7, 2023
-- This plugin is now free and open source under the MIT license.
+v2.1.1 - September 7, 2023
+- This older plugin version is now free and open source under the MIT license.

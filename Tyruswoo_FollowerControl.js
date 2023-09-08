@@ -37,7 +37,7 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v2.2.1 Allows control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v2.1.1  Allows control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @param Max Party Members
@@ -49,15 +49,11 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update: September 18, 2020
+ * Last Update: April 19, 2020
  * 
- * WARNING: This is an older version! It lacks features and improvements
+ * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
  * on Tyruswoo.com.
- * 
- * ===========================================================================
- * Tyruswoo.com
- *   Join for more RPG Maker MV content and tutorials!
  * ===========================================================================
  * Tyruswoo's Follower Control plugin allows greater control of party
  * follower movement.  It allows using these commands on any follower:
@@ -490,19 +486,10 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *        Added a plugin parameter to control the Max Party Members. This
  *        allows you to have more than the default of 4 party members shown in
  *        the party while the player traverses the map.
- *
- * v2.2   Sept. 18, 2020:
- *        Fixed a bug in which it was possible to select a absent follower if
- *        the current $gameParty.battleMembers.length was less than
- *        $gameParty.maxBattleMembers. For example, if the Max Party Members
- *        is 4, and the current party size is 2, it was possible to select
- *        followers 2 and 3, even though they do not exist. This was not
- *        usually noticeable, because such followers are invisible. However,
- *        using Show Balloon Icon or Show Animation could cause balloons or
- *        animations to appear at the location of an absent follower.
  * 
- * v2.2.1  Sept. 7, 2023:
- *         This plugin is now free and open source under the MIT license.
+ * v2.1.1  September 7, 2023:
+ *         This older plugin version is now free and open source under the
+ *         MIT License.
  * ============================================================================
  * MIT License
  *
@@ -525,6 +512,7 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
+ * ============================================================================
  */
 
 Tyruswoo.Parameters = PluginManager.parameters('Tyruswoo_FollowerControl');
@@ -678,7 +666,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 				var variableId = parseInt(args[1]);
 				var follower_position = $gameVariables.value(variableId);
 				if (follower_position > 0) {
-					this._follower = follower_position <= $gameParty.battleMembers().length - 1 ? $gamePlayer.followers().follower(follower_position - 1) : null; //Update v2.2
+					this._follower = $gamePlayer.followers().follower(follower_position - 1);
 					console.log("Follower:  Move Route commands now affect Follower", follower_position);
 				} else {
 					this._follower = $gamePlayer;
@@ -806,7 +794,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 			case '50':
 				var follower_position = parseInt(args[0]);
 				if (follower_position > 0) {
-					this._follower = (follower_position <= $gameParty.battleMembers().length - 1) ? $gamePlayer.followers().follower(follower_position - 1) : null; //Update v2.2
+					this._follower = $gamePlayer.followers().follower(follower_position - 1);
 					console.log("Follower:  Move Route commands now affect Follower", follower_position);
 				} else {
 					this._follower = $gamePlayer;
