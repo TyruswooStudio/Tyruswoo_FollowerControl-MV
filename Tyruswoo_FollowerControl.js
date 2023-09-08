@@ -37,19 +37,13 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v2.1.1  Allows control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v2.0.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
- *
- * @param Max Party Members
- * @type number
- * @min 1
- * @desc The maximum number of party members. This includes the leader and followers. Default: 4
- * @default 4
  *
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update: April 19, 2020
+ * Last Update:  January 24, 2020
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
@@ -480,16 +474,9 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *
  *        Remember that each script call moves the character only one tile,
  *        i.e. only one step.
- *
- *
- * v2.1   April 19, 2020:
- *        Added a plugin parameter to control the Max Party Members. This
- *        allows you to have more than the default of 4 party members shown in
- *        the party while the player traverses the map.
  * 
- * v2.1.1  September 7, 2023:
- *         This older plugin version is now free and open source under the
- *         MIT License.
+ * v2.0.1  September 4, 2023:
+ *         This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
  *
@@ -512,22 +499,7 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
- * ============================================================================
  */
-
-Tyruswoo.Parameters = PluginManager.parameters('Tyruswoo_FollowerControl');
-Tyruswoo.Param = Tyruswoo.Param || {};
-
-Tyruswoo.Param.MaxBattleMembers = Number(Tyruswoo.Parameters['Max Party Members']);
-
-//=============================================================================
-// Game_Party
-//=============================================================================
-
-// Replacement method
-Game_Party.prototype.maxBattleMembers = function() {
-    return Tyruswoo.Param.MaxBattleMembers;
-};
 
 //=============================================================================
 // Game_Interpreter

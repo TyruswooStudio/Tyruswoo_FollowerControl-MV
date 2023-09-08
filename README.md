@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v2.1.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v2.0.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -437,10 +437,5 @@ or by their current name.
 v2.00  January 24, 2020:
 - Significant improvements to pathfinding.
 
-v2.1 - April 19, 2020:
-- Added a plugin parameter to control the Max Party Members. This
-  allows you to have more than the default of 4 party members shown in
-  the party while the player traverses the map.
-
-v2.1.1 - September 7, 2023
+v2.0.1 - September 7, 2023
 - This older plugin version is now free and open source under the MIT license.
