@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin for RPG Maker MV
+# Tyruswoo Follower Control plugin v2.2.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
