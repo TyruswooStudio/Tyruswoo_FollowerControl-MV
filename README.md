@@ -1,3 +1,8 @@
+## WARNING: This is an older version!
+It lacks the features and improvements of this plugin's later versions.
+To get the latest version for free, visit
+[Tyruswoo.com](https://www.tyruswoo.com).
+
 # Tyruswoo Follower Control plugin for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
@@ -444,9 +449,5 @@ v2.2 - Sept. 18, 2020:
   However, using Show Balloon Icon or Show Animation could cause balloons
   or animations to appear at the location of an absent follower.
 
-v3.0 - August 24, 2021
-- Fixed a bug that was causing crashes on save/load in some games.
-  Ensured that move routes given to nonexistent followers are ignored.
-
-v3.01 - September 2, 2023
+v2.2.1 - September 7, 2023
 - This plugin is now free and open source under the MIT license.
