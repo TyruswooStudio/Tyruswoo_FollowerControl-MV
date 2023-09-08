@@ -3,7 +3,7 @@
 // by Tyruswoo
 //
 // Be sure to save as:
-// Tyruswoo_FollowerControl.js
+// TYR_FollowerControl.js
 //=============================================================================
 
 /*
@@ -37,13 +37,13 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v1.11.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc v1.10.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
  * Follower Control
  * by Tyruswoo
- * Last Update:  August 2, 2019
+ * Last Update:  June 23, 2019
  * 
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
@@ -382,32 +382,8 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *                
  *          All of the above plugin commands do the same thing of returning
  *          the follower to their default pose.
- *
- * v1.11  August 2, 2019:
- *        Modified feature: There are now two ways to select a follower by
- *        their name. You can select a follower by their actor's name, as
- *        listed in the database.
- *        - By default, followers will be selected based on their actor's
- *          name in the database. For example:
- *
- *                Follower Shompta
- *
- *          The above searches the followers, and if a follower's actor has
- *          the name "Shompta" in the database, then that follower is selected.
- *        - You can, if so desired, still search for an actor based on their
- *          current name. The only reason to use this method is if
- *          you want special things to occur only when an actor has a special
- *          name that the player has entered in. For example, either of the
- *          following will select a follower who is currently named
- *          "SecretCode".
- *
- *                Follower CurrentName SecretCode
- *                Follower Current_Name SecretCode
- *
- *          If a player has indeed renamed an actor to be named "SecretCode",
- *          then the follower associated with that actor will be selected.
  * 
- * v1.11.1: September 7, 2023:
+ * v1.10.1  September 7, 2023:
  *          This plugin is now free and open source under the MIT license.
  * ============================================================================
  * MIT License
@@ -593,7 +569,7 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 					}
 				}
 				if(!follower_found) {
-					console.warn("Follower: Error! Unable to find a follower with Actor ID", actorId);
+					console.log("Follower: Error! Unable to find a follower named", follower_name);
 				}
 				break;
 			case 'POSE':
@@ -623,26 +599,6 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 					console.log("Follower Pose: Changed actor", actorId, "to pose", pose);
 				} else {
 					console.warn("Follower Pose: Error! No actor ID.");
-				}
-				break;
-			case 'CURRENTNAME':
-			case 'CURRENT_NAME':
-				var follower_current_name = args[1];
-				var len = $gameParty.battleMembers().length;
-				var follower_found = false;
-				for (var i = 0; i < len; i++) {
-					if($gameParty.battleMembers()[i].name() == follower_current_name) {
-						if(i > 0) {
-							this._follower = $gamePlayer.followers().follower(i - 1);
-						} else {
-							this._follower = $gamePlayer;
-						}
-						console.log("Follower:  Move Route commands now affect " + follower_current_name + ", who is Follower", i);
-						follower_found = true;
-					}
-				}
-				if(!follower_found) {
-					console.warn("Follower: Error! Unable to find a follower who is currently named", follower_current_name);
 				}
 				break;
 			case '0':
@@ -706,25 +662,22 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 				}
 				break;
 			default:
-				var follower_database_name = args[0];
+				var follower_name = args[0];
 				var len = $gameParty.battleMembers().length;
 				var follower_found = false;
 				for (var i = 0; i < len; i++) {
-					var actorId = $gameParty.battleMembers()[i].actorId(); //Get the actorId that belongs to this follower.
-					var actor = $dataActors[actorId]; //Get the actor that belongs to that actorId.
-					var actorName = actor.name; //Get the name that belongs to that actor.
-					if(actorName == follower_database_name) {
+					if($gameParty.battleMembers()[i].name() == follower_name) {
 						if(i > 0) {
 							this._follower = $gamePlayer.followers().follower(i - 1);
 						} else {
 							this._follower = $gamePlayer;
 						}
-						console.log("Follower:  Move Route commands now affect " + follower_database_name + ", who is Follower", i);
+						console.log("Follower:  Move Route commands now affect " + follower_name + ", who is Follower", i);
 						follower_found = true;
 					}
 				}
 				if(!follower_found) {
-					console.warn("Follower: Error! Unable to find a follower whose database actor is named", follower_database_name);
+					console.log("Follower: Error! Unable to find a follower named", follower_name);
 				}
 		}
 	}

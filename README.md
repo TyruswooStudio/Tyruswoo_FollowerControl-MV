@@ -3,7 +3,7 @@ It lacks the features and improvements of this plugin's later versions.
 To get the latest version for free, visit
 [Tyruswoo.com](https://www.tyruswoo.com).
 
-# Tyruswoo Follower Control plugin v1.11.1 for RPG Maker MV
+# Tyruswoo Follower Control plugin v1.10.1 for RPG Maker MV
 
 Tyruswoo's Follower Control plugin allows greater control of party
 follower movement.  It allows using these commands on any follower:
@@ -25,7 +25,7 @@ Now you can easily make cool cutscenes involving the party's followers and leade
 | `Follower Chase`            | Followers chase the leader again.                  |
 | `Follower <Name>`           | Target follower associated with actor named <Name> |
 | `Follower Variable <varId>` | Target follower based on value of a variable       |
-| `Follower Actor <actorId>`  | Target follower associated with actor <actorId>    |
+| `Follower Actor <actorId>`  | Target follower associated with actor `<actorId>`  |
 | `Follower Pose <poseName>`  | Change the current follower's pose                 |
 | `Follower Pose default`     | Return the current follower's pose to normal       |
 
@@ -162,25 +162,6 @@ certain follower to have a question mark bubble, or to do a jump
 before speaking, etc, you can select that follower even if you do not
 know their position in the group. This can be helpful if you allow
 the player to alter the marching order of their characters' party.
-
-### `Follower CurrentName EnteredName`
-
-where `EnteredName` is the current name of the follower's associated actor,
-as it is recorded in the savefile currently loaded.
-
-You can, if so desired, search for an actor based on their
-current name. A potential reason to use this method is if
-you want special things to occur only when an actor has a special
-name that the player has entered in. For example, either of the
-following will select a follower who is currently named "SecretCode".
-
-```
-Follower CurrentName SecretCode
-Follower Current_Name SecretCode
-```
-
-If a player has indeed renamed an actor to be named "SecretCode",
-then the follower associated with that actor will be selected.
 
 ### `Follower Actor ID`
 
@@ -406,10 +387,5 @@ Added feature:
 v1.10 - June 23, 2019:
 - Added `Follower Pose` command.
 
-v1.11  August 2, 2019:
-Modified feature: There are now two ways to select a follower by
-their name: by their original name as listed in the database,
-or by their current name.
-
-v1.11.1 - September 7, 2023
+v1.10.1 - September 7, 2023
 - This older plugin version is now free and open source under the MIT license.
