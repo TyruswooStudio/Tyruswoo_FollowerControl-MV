@@ -37,7 +37,7 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v1.11.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc MV v1.11.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
