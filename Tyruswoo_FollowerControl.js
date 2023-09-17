@@ -37,14 +37,12 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v1.8.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc MV v1.8.1  Allows greater control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo
  *
  * @help
- * Follower Control
- * by Tyruswoo
- * Last Update:  27 Feb. 2019
- * 
+ * Follower Control by Tyruswoo
+ *
  * WARNING: This is an older plugin! It lacks features and improvements
  * present in the latest version. You can get the latest version for free
  * on Tyruswoo.com.
