@@ -37,7 +37,7 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc v3.0.1 Allows control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc MV v3.0.1 Allows control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo and McKathlin
  *
  * @param Max Party Members
@@ -47,12 +47,7 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * @default 4
  *
  * @help
- * Follower Control
- * by Tyruswoo
- * Last Update: August 24, 2021
- * ===========================================================================
- * Tyruswoo.com
- *   Join for more RPG Maker MV content and tutorials!
+ * Follower Control by Tyruswoo
  * ===========================================================================
  * Tyruswoo's Follower Control plugin allows greater control of party
  * follower movement.  It allows using these commands on any follower:
