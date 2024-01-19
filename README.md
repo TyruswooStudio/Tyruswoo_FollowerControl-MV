@@ -117,6 +117,32 @@ the effect of Transfer Player.
   is useful for cutscenes in which the party leader moves around
   alone, allowing followers and leader to all move independently.
 
+**Follower StopChase 1**
+- Makes the first follower (i.e. the one directly after the leader)
+  stop chasing.
+- If other followers are chasing, they will continue
+  chase, close the gap, etc.
+
+**Follower StopChase 2**
+- Makes the second follower (i.e. the third party member) stop chasing.
+  Other followers, if chasing, will continue chase.
+
+**Follower StopChase Charlie**
+- The actor named Charlie will stop chasing. Other followers are not
+  affected.
+
+**Follower Chase Selected**
+- Makes the currently selected follower chase the leader. 
+- The other followers' Chase / StopChase behavior will not change.
+- Follower Chase has all the same individual syntax options that are
+  available to Follower StopChase.
+
+Transferring to a different area, or calling StopChase or Chase on the
+whole party, will cancel all individual StopChase and Chase instructions.
+
+If a Chase or StopChase action is called on the party leader,
+then it will apply to the entire party.
+
 ## Details of alternative ways to select a follower
 
 ### `Follower Variable variableID`
@@ -450,3 +476,7 @@ v3.0 - August 24, 2021
 
 v3.0.1 - September 7, 2023
 - This plugin is now free and open source under the MIT license.
+
+v3.1.0 - January 18, 2024
+- The Chase and StopChase plugin commands can now target individual
+  followers.

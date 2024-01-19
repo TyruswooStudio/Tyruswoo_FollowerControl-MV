@@ -37,7 +37,7 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc MV v3.0.1 Allows control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc MV v3.1.0 Allows control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo and McKathlin
  *
  * @param Max Party Members
@@ -149,13 +149,44 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * Details of Plugin Commands to make followers stop and start following:
  *
  * Follower Chase
- *      Makes all followers chase the leader and each other.  This is the
- *      default behavior of followers.
- *
+ *      Makes all followers chase the leader and each other.
+ *      This is the default behavior of followers.
+ * 
  * Follower StopChase
- *      Makes all followers stop chasing the leader and each other.  This
- *      is useful for cutscenes in which the party leader moves around
+ *      Makes all followers stop chasing the leader and each other.
+ *      This is useful for cutscenes in which the party leader moves around
  *      alone, allowing followers and leader to all move independently.
+ * 
+ * Follower StopChase Selected
+ *      Makes the currently selected follower stop chasing the leader.
+ *      If other followers are chasing, they will continue chase and close
+ *      the gap in the line, if any.
+ * 
+ * Follower StopChase 1
+ *      Makes the first follower (i.e. the one directly after the leader)
+ *      stop chasing. If other followers are chasing, they will continue
+ *      chase, close the gap, etc.
+ *
+ * Follower StopChase 2
+ *      Makes the second follower (i.e. the third party member) stop chasing.
+ *      Other followers, if chasing, will continue chase.
+ * 
+ * Follower StopChase Charlie
+ *      The actor named Charlie will stop chasing. Other followers are not
+ *      affected.
+ * 
+ * Follower Chase Selected
+ *      Makes the currently selected follower chase the leader. 
+ *      The other followers' Chase / StopChase behavior will not change.
+ *      Follower Chase has all the same individual syntax options that are
+ *      available to Follower StopChase.
+ *
+ * More notes about individual StopChase and Chase:
+ * * Transferring to a different area, or calling StopChase or Chase on the
+ *   whole party, will cancel all individual StopChase and Chase instructions.
+ * * If a Chase or StopChase action is called on the party leader,
+ *   then it will apply to the entire party.
+ * 
  * ===========================================================================
  * Details of alternative ways to select a follower:
  *
@@ -497,6 +528,11 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  * 
  * v3.0.1  September 7, 2023:
  *         This plugin is now free and open source under the MIT license.
+ * 
+ * v3.1.0  January 18, 2024:
+ *         The Chase and StopChase plugin commands can now target individual
+ *         followers.
+ * 
  * ============================================================================
  * MIT License
  *
@@ -536,58 +572,8 @@ Tyruswoo.Param.MaxBattleMembers = Number(Tyruswoo.Parameters['Max Party Members'
 
 // Replacement method
 Game_Party.prototype.maxBattleMembers = function() {
-    return Tyruswoo.Param.MaxBattleMembers;
+	return Tyruswoo.Param.MaxBattleMembers;
 };
-
-//=============================================================================
-// Property definitions used by multiple classes
-//=============================================================================
-
-Tyruswoo.FollowerControl.followerIndexPropertyDef = {
-	get: function() {
-		return this._followerIndex;
-	},
-	set: function(value) {
-		this._followerIndex = value;
-		if (this._followerIndex > 0) {
-			console.log("FollowerControl: Move Route commands now affect Follower ", this._followerIndex);
-		} else if (this._followerIndex === 0) {
-			console.log("FollowerControl: Move Route commands now affect the party Leader.");
-		} else {
-			console.warn("FollowerControl: follower index set to unexpected number " + this._followerIndex);
-		}
-	},
-	enumerable: true
-};
-
-Tyruswoo.FollowerControl.followerPropertyDef = {
-	get: function() {
-		if (0 == this.followerIndex) {
-			return $gamePlayer;
-		} else if (this.followerIndex > 0 && $gamePlayer && $gamePlayer.followers) {
-			if (this.followerIndex >= $gameParty.size()) {
-				return null; // No one's following at this index.
-			} else {
-				return $gamePlayer.followers().follower(this.followerIndex - 1);
-			}
-		} else {
-			console.warn("FollowerControl: Follower property could not find Follower "+ this.followerIndex);
-			return null;
-		}
-	},
-	set: function(value) {
-		if (value === $gamePlayer) {
-			this.followerIndex = 0; // party leader
-		} else if (!$gamePlayer.followers() || null === value || undefined === value) {
-			console.warn("FollowerControl: Couldn't set follower.");
-			this.followerIndex = -1;
-		} else {
-			this.followerIndex = $gamePlayer.followers()._data.indexOf(value) + 1;
-		}
-	},
-	enumerable: false
-};
-
 
 //=============================================================================
 // Game_Interpreter
@@ -595,38 +581,80 @@ Tyruswoo.FollowerControl.followerPropertyDef = {
 
 // New properties
 Object.defineProperties(Game_Interpreter.prototype, {
-	followerIndex: Tyruswoo.FollowerControl.followerIndexPropertyDef,
-	_follower: Tyruswoo.FollowerControl.followerPropertyDef
+	followerIndex: {
+		get: function() {
+			return this._followerIndex;
+		},
+		set: function(value) {
+			this._followerIndex = value;
+			if (this._followerIndex > 0) {
+				console.log("FollowerControl: Move Route commands now affect Follower ", this._followerIndex);
+			} else if (this._followerIndex === 0) {
+				console.log("FollowerControl: Move Route commands now affect the party Leader.");
+			} else {
+				console.warn("FollowerControl: follower index set to unexpected number " + this._followerIndex);
+			}
+		},
+		enumerable: true
+	},
+	_follower: {
+		get: function() {
+			if (0 == this.followerIndex) {
+				return $gamePlayer;
+			} else if (this.followerIndex > 0 && $gamePlayer && $gamePlayer.followers) {
+				if (this.followerIndex >= $gameParty.size()) {
+					return null; // No one's following at this index.
+				} else {
+					return $gamePlayer.followers().follower(this.followerIndex - 1);
+				}
+			} else {
+				console.warn("FollowerControl: Follower property could not find Follower "+ this.followerIndex);
+				return null;
+			}
+		},
+		set: function(value) {
+			if (value === $gamePlayer) {
+				this.followerIndex = 0; // party leader
+			} else if (!$gamePlayer.followers() || null === value || undefined === value) {
+				console.warn("FollowerControl: Couldn't set follower.");
+				this.followerIndex = -1;
+			} else {
+				this.followerIndex = $gamePlayer.followers()._data.indexOf(value) + 1;
+			}
+		},
+		enumerable: false
+	}
 });
 
 // Alias method.
 Tyruswoo.FollowerControl.Game_interpreter_clear = Game_Interpreter.prototype.clear
 Game_Interpreter.prototype.clear = function() {
 	Tyruswoo.FollowerControl.Game_interpreter_clear.call(this);
-    this.followerIndex = 0; // party leader
+	this.followerIndex = 0; // party leader
 };
 
 // Replacement method
 // Transfer Player
 Game_Interpreter.prototype.command201 = function() {
-    if (!$gameParty.inBattle() && !$gameMessage.isBusy()) {
-        var mapId, x, y;
-        if (this._params[0] === 0) {  // Direct designation
-            mapId = this._params[1];
-            x = this._params[2];
-            y = this._params[3];
-        } else {  // Designation with variables
-            mapId = $gameVariables.value(this._params[1]);
-            x = $gameVariables.value(this._params[2]);
-            y = $gameVariables.value(this._params[3]);
-        }
+	if (!$gameParty.inBattle() && !$gameMessage.isBusy()) {
+		var mapId, x, y;
+		if (this._params[0] === 0) {  // Direct designation
+			mapId = this._params[1];
+			x = this._params[2];
+			y = this._params[3];
+		} else {  // Designation with variables
+			mapId = $gameVariables.value(this._params[1]);
+			x = $gameVariables.value(this._params[2]);
+			y = $gameVariables.value(this._params[3]);
+		}
 		if (mapId !== $gameMap._mapId) {  //Transfer the leader, with followers.
-			$gamePlayer._followers._stopChase = false;  //If player goes to a new map, followers will resume chase.
+			$gamePlayer._followers.chase();  // If player goes to a new map, followers will resume chase.
 			this.followerIndex = 0;  //If player goes to a new map, reset target follower to the leader.
 			$gamePlayer.reserveTransfer(mapId, x, y, this._params[4], this._params[5]);
 			this.setWaitMode('transfer');
 		} else if (this.followerIndex === 0) {
-			if (!$gamePlayer._followers._stopChase) { //Followers are chasing the leader, so transfer leader with followers.
+			if ($gamePlayer._followers.areChasing()) {
+				// Transfer leader with followers.
 				$gamePlayer.reserveTransfer(mapId, x, y, this._params[4], this._params[5]);
 				this.setWaitMode('transfer');
 			} else { //Followers are not chasing the leader, so simply teleport the leader within the map, like any other follower.
@@ -657,80 +685,91 @@ Game_Interpreter.prototype.command201 = function() {
 			}
 		}
 		this._index++;
-    }
-    return false;
+	}
+	return false;
 };
 
 // Replacement method
 // Set Movement Route
 Game_Interpreter.prototype.command205 = function() {
-    $gameMap.refreshIfNeeded();
-    this._character = this.character(this._params[0]);
+	$gameMap.refreshIfNeeded();
+	this._character = this.character(this._params[0]);
 	if (this._character === $gamePlayer) {
 		this._character = this._follower;
 	}
-    if (this._character) {
-        this._character.forceMoveRoute(this._params[1]);
-        if (this._params[1].wait) {
-            this.setWaitMode('route');
-        }
-    }
-    return true;
+	if (this._character) {
+		this._character.forceMoveRoute(this._params[1]);
+		if (this._params[1].wait) {
+			this.setWaitMode('route');
+		}
+	}
+	return true;
 };
 
 // Replacement method
 // Show Balloon Icon
 Game_Interpreter.prototype.command213 = function() {
-    this._character = this.character(this._params[0]);
+	this._character = this.character(this._params[0]);
 	if (this._character === $gamePlayer) {
 		this._character = this._follower;
 	}
-    if (this._character) {
-        this._character.requestBalloon(this._params[1]);
-        if (this._params[2]) {
-            this.setWaitMode('balloon');
-        }
-    }
-    return true;
+	if (this._character) {
+		this._character.requestBalloon(this._params[1]);
+		if (this._params[2]) {
+			this.setWaitMode('balloon');
+		}
+	}
+	return true;
 };
 
 // Replacement method
 // Show Animation
 Game_Interpreter.prototype.command212 = function() {
-    this._character = this.character(this._params[0]);
+	this._character = this.character(this._params[0]);
 	if (this._character === $gamePlayer) {
 		this._character = this._follower;
 	}
-    if (this._character) {
-        this._character.requestAnimation(this._params[1]);
-        if (this._params[2]) {
-            this.setWaitMode('animation');
-        }
-    }
-    return true;
+	if (this._character) {
+		this._character.requestAnimation(this._params[1]);
+		if (this._params[2]) {
+			this.setWaitMode('animation');
+		}
+	}
+	return true;
 };
 
 // Alias method
 Tyruswoo.FollowerControl.Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 Game_Interpreter.prototype.pluginCommand = function(command, args) {
-    Tyruswoo.FollowerControl.Game_Interpreter_pluginCommand.call(this, command, args);
+	Tyruswoo.FollowerControl.Game_Interpreter_pluginCommand.call(this, command, args);
 	var c = command.toUpperCase();
-    if (c === "FOLLOW" || c === "FOLLOWER") {
+	if (c === "FOLLOW" || c === "FOLLOWER") {
 		switch (args[0].toUpperCase()) {
 			case 'CHASE':
-				var arg1 = null;
-				if(args[1]) arg1 = args[1].toUpperCase();
-				if (arg1 === 'FALSE' || arg1 === 'STOP') {
-					$gamePlayer._followers._stopChase = true;
-					console.log("Follower Chase false:  Followers no longer chase the leader.");
-				} else {
-					$gamePlayer._followers._stopChase = false;
-					console.log("Follower Chase:  Followers now chase the leader.");
-				}
-				break;
 			case 'STOPCHASE':
-				$gamePlayer._followers._stopChase = true;
-				console.log("Follower StopChase:  Followers no longer chase the leader.");
+				doChase = args[0].toUpperCase() == 'CHASE';
+
+				let index = -1;
+				if (/^(CURRENT|SELECTED)$/i.test(args[1])) {
+					index = this.followerIndex;
+				} else if (/^\d+$/.test(args[1])) {
+					index = parseInt(args[1]);
+				} else {
+					index = $gamePlayer._followers.getIndexByActorName(args[0]);
+				}
+
+				if (index > 0) {
+					// The index corresponds to a follower.
+					// Set chase for that one follower.
+					let follower = $gamePlayer._followers.follower(index - 1);
+					if (follower) {
+						follower.setChase(doChase);
+					}
+				} else {
+					// The index is 0 (the leader) or -1 (unset).
+					// Set chase for all followers.
+					$gamePlayer._followers.setChase(doChase);
+				}
 				break;
 			case 'VARIABLE':
 				var variableId = parseInt(args[1]);
@@ -850,136 +889,230 @@ Game_Interpreter.prototype.pluginCommand = function(command, args) {
 				this.followerIndex = parseInt(args[0]); // Update: v 3.0
 				break;
 			default:
-				var follower_database_name = args[0];
-				var len = $gameParty.battleMembers().length;
-				var follower_found = false;
-				for (var i = 0; i < len; i++) {
-					var actorId = $gameParty.battleMembers()[i].actorId(); // Get the actorId that belongs to this follower.
-					var actor = $dataActors[actorId]; // Get the actor that belongs to that actorId.
-					var actorName = actor.name; // Get the name that belongs to that actor.
-					if(actorName == follower_database_name) {
-						this.followerIndex = i; // Update: v 3.0
-						console.log("Follower:  Move Route commands now affect " + follower_database_name + ", who is Follower", i);
-						follower_found = true;
-					}
-				}
-				if(!follower_found) {
+				let myIndex = $gamePlayer._followers.getIndexByActorName(args[0]);
+				if (myIndex >= 0) {
+					this.followerIndex = myIndex;
+				} else {
 					console.warn("Follower: Error! Unable to find a follower whose database actor is named", follower_database_name);
 				}
-		}
-	}
+		} // end switch statement
+	} // endif command is "FOLLOW" or "FOLLOWER"
 };
 
 //=============================================================================
 // Game_Followers
 //=============================================================================
 
-// New properties
-Object.defineProperties(Game_Followers.prototype, {
-	followerIndex: Tyruswoo.FollowerControl.followerIndexPropertyDef,
-	_follower: Tyruswoo.FollowerControl.followerPropertyDef
-});
-
 // Alias method
 Tyruswoo.FollowerControl.Game_Followers_initialize = Game_Followers.prototype.initialize;
 Game_Followers.prototype.initialize = function() {
 	Tyruswoo.FollowerControl.Game_Followers_initialize.call(this);
-    this._stopChase = false;
-	this.followerIndex = 0; // party leader
+	this._stopChase = false;
+};
+
+// New method
+Game_Followers.prototype.areChasing = function() {
+	return !this._stopChase;
+};
+
+Game_Followers.prototype.setChase = function(doChase=true) {
+	// Set chase for all followers
+	this._stopChase = !doChase;
+	this.forEach(function(follower) {
+		// Remove individual chase toggles; do what the group is doing.
+		follower.resetChase();
+	}, this);
+}
+
+// New method
+// Stop chasing the leader.
+Game_Followers.prototype.stopChase = function() {
+	this.setChase(false);
+};
+
+// New method
+// Resume chasing the leader.
+Game_Followers.prototype.chase = function() {
+	this.setChase(true);
+};
+
+// New method
+// Given an actor name, find their index in the party
+Game_Followers.prototype.getIndexByActorName = function(targetName) {
+	// TODO: Revise to work for non-combat followers as well
+	var len = $gameParty.battleMembers().length;
+	for (var i = 0; i < len; i++) {
+		var actorId = $gameParty.battleMembers()[i].actorId(); // Get the actorId that belongs to this follower.
+		var actor = $dataActors[actorId]; // Get the actor that belongs to that actorId.
+		var actorName = actor.name; // Get the name that belongs to that actor.
+		if (actorName == targetName) {
+			return i;
+		}
+	}
+	// If we're here, no actor by that name was found among these followers.
+	return -1;
 };
 
 // Replacement method
 Game_Followers.prototype.updateMove = function() {
-	if (!this._stopChase) {
-		for (var i = this._data.length - 1; i >= 0; i--) {
-			var precedingCharacter = (i > 0 ? this._data[i - 1] : $gamePlayer);
-			this._data[i].chaseCharacter(precedingCharacter);
+	chaseList = this._data.filter((follower) => follower.isChasing())
+	for (var i = chaseList.length - 1; i >= 0; i--) {
+		var precedingCharacter = (i > 0 ? chaseList[i - 1] : $gamePlayer);
+		chaseList[i].chaseCharacter(precedingCharacter);
+	}
+};
+
+// Replacement method
+// Chasing followers will jump; non-chasing followers will not jump.
+Game_Followers.prototype.jumpAll = function() {
+	if ($gamePlayer.isJumping()) {
+		for (var i = 0; i < this._data.length; i++) {
+			var follower = this._data[i];
+			if (follower.isChasing()) {
+				var sx = $gamePlayer.deltaXFrom(follower.x);
+				var sy = $gamePlayer.deltaYFrom(follower.y);
+				follower.jump(sx, sy);
+			}
 		}
 	}
 };
 
 // New method
 Game_Followers.prototype.setOpacityAll = function(opacity) {
-    this.forEach(function(follower) {
-        follower.setOpacity(opacity);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setOpacity(opacity); 
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setStepAnimeAll = function(stepAnime) {
-    this.forEach(function(follower) {
-        follower.setStepAnime(stepAnime);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setStepAnime(stepAnime);
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setDirectionFixAll = function(directionFix) {
-    this.forEach(function(follower) {
-        follower.setDirectionFix(directionFix);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setDirectionFix(directionFix);
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setTransparentAll = function(transparent) {
-    this.forEach(function(follower) {
-        follower.setTransparent(transparent);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setTransparent(transparent);
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setWalkAnimeAll = function(walkAnime) {
-    this.forEach(function(follower) {
-        follower.setWalkAnime(walkAnime);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setWalkAnime(walkAnime);
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setBlendModeAll = function(blendMode) {
-    this.forEach(function(follower) {
-        follower.setBlendMode(blendMode);
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setBlendMode(blendMode);
+		}
+	}, this);
 };
 
 // New method
 Game_Followers.prototype.setMoveSpeedAll = function(moveSpeed) {
-    this.forEach(function(follower) {
-        follower.setMoveSpeed($gamePlayer.realMoveSpeed()); //Use the player's realMoveSpeed
-    }, this);
+	this.forEach(function(follower) {
+		if (follower.isChasing()) {
+			follower.setMoveSpeed($gamePlayer.realMoveSpeed()); //Use the player's realMoveSpeed
+		}
+	}, this);
 };
 
 //=============================================================================
 // Game_Follower
 //=============================================================================
 
-// Replacement method.
+// New method
+// Set this individual follower's chase.
+Game_Follower.prototype.setChase = function(doChase=true) {
+	this._stopChase = !doChase;
+}
+
+// New method
+// This individual follower will start chasing the leader.
+Game_Follower.prototype.chase = function() {
+	this._stopChase = false;
+};
+
+// New method
+// This individual follower will stop chasing the leader.
+Game_Follower.prototype.stopChase = function() {
+	this._stopChase = true;
+};
+
+// New method
+// This individual follower will chase or not,
+// depending on what the Followers group is doing.
+Game_Follower.prototype.resetChase = function() {
+	this._stopChase = null;
+};
+
+// New method
+Game_Follower.prototype.isChasing = function() {
+	if (true === this._stopChase) {
+		return false;
+	} else if (false === this._stopChase) {
+		return true;
+	} else if ($gamePlayer && $gamePlayer._followers) {
+		// When this._stopChase is null or undefined,
+		// the Follower defaults to the whole Followers group's behavior.
+		return $gamePlayer._followers.areChasing();
+	} else {
+		return true; // Chasing is followers' default behavior.
+	}
+};
+
+// Replacement method
 Game_Follower.prototype.update = function() {
-    Game_Character.prototype.update.call(this);
-	if(!$gamePlayer._followers._stopChase) { //Check whether followers are chasing the player.
+	Game_Character.prototype.update.call(this);
+	if (this.isChasing()) { // Check whether this follower is chasing the player.
 		this.setMoveSpeed($gamePlayer.realMoveSpeed()); //If followers are chasing the player, then make sure they all move as fast as the player.
 	}
 	//this.setOpacity($gamePlayer.opacity()); //Follower opacity should not be set each time Game_Follower.update() is called.
 											  //If StopChase is off, opacity changes for all followers, as seen in the new Game_Player.setOpacity() function.
 											  //If StopChase if on, opacity changes only for selected follower, using the processMoveCommand() function.
-    //this.setBlendMode($gamePlayer.blendMode()); //Follower blendMode should not be set each time Game_Follower.update() is called.
+	//this.setBlendMode($gamePlayer.blendMode()); //Follower blendMode should not be set each time Game_Follower.update() is called.
 												  //If StopChase is off, blendMode changes for all followers, as seen in the new Game_Player.setBlendMode() function.
 												  //If StopChase if on, blendMode changes only for selected follower, using the processMoveCommand() function.
-    //this.setWalkAnime($gamePlayer.hasWalkAnime()); //Follower walkAnime should not be set each time Game_Follower.update() is called.
+	//this.setWalkAnime($gamePlayer.hasWalkAnime()); //Follower walkAnime should not be set each time Game_Follower.update() is called.
 													 //If StopChase is off, walkAnime changes for all followers, as seen in the new Game_Player.setWalkAnime() function.
 													 //If StopChase if on, walkAnime changes only for selected follower, using the processMoveCommand() function.
-    //this.setStepAnime($gamePlayer.hasStepAnime()); //Follower stepAnime should not be set each time Game_Follower.update() is called.
+	//this.setStepAnime($gamePlayer.hasStepAnime()); //Follower stepAnime should not be set each time Game_Follower.update() is called.
 													 //If StopChase is off, stepAnime changes for all followers, as seen in the new Game_Player.setStepAnime() function.
 													 //If StopChase if on, stepAnime changes only for selected follower, using the processMoveCommand() function.
-    //this.setDirectionFix($gamePlayer.isDirectionFixed()); //Follower directionFix should not be set each time Game_Follower.update() is called.
+	//this.setDirectionFix($gamePlayer.isDirectionFixed()); //Follower directionFix should not be set each time Game_Follower.update() is called.
 															//If StopChase is off, directionFix changes for all followers, as seen in the new Game_Player.setDirectionFix() function.
 															//If StopChase if on, directionFix changes only for selected follower, using the processMoveCommand() function.
-    //this.setTransparent($gamePlayer.isTransparent()); //Follower transparency should not be set each time Game_Follower.update() is called.
+	//this.setTransparent($gamePlayer.isTransparent()); //Follower transparency should not be set each time Game_Follower.update() is called.
 														//If StopChase is off, transparency changes for all followers, as seen in the new Game_Player.setTransparent() function.
 														//If StopChase if on, transparency changes only for selected follower, using the processMoveCommand() function.
 };
 
 // New method. (For followers, this method is used, instead of Game_CharacterBase.isDebugThrough.)
 Game_Follower.prototype.isDebugThrough = function() { //This allows followers to travel through walls when playtesting and holding Ctrl, just like the player.
-    return Input.isPressed('control') && $gameTemp.isPlaytest();
+	return Input.isPressed('control') && $gameTemp.isPlaytest();
 };
 
 //=============================================================================
@@ -991,7 +1124,7 @@ Game_Follower.prototype.isDebugThrough = function() { //This allows followers to
 Tyruswoo.FollowerControl.Game_CharacterBase_initMembers = Game_CharacterBase.prototype.initMembers;
 Game_CharacterBase.prototype.initMembers = function() {
 	Tyruswoo.FollowerControl.Game_CharacterBase_initMembers.call(this);
-    this._searchLimit = 12; //We define a pathfinding searchLimit variable for each character.
+	this._searchLimit = 12; //We define a pathfinding searchLimit variable for each character.
 };
 
 // New method
@@ -1016,32 +1149,32 @@ Game_Character.prototype.searchLimit = function() {
 
 // Replacement method
 Game_Character.prototype.turnTowardCharacter = function(character) {
-    var sx = this.deltaXFrom(character.x);
-    var sy = this.deltaYFrom(character.y);
+	var sx = this.deltaXFrom(character.x);
+	var sy = this.deltaYFrom(character.y);
 	if (sx === 0 && sy === 0) {
 		this.setDirection($gamePlayer.direction());
 	} else if (Math.abs(sx) > Math.abs(sy)) {
-        this.setDirection(sx > 0 ? 4 : 6);
-    } else if (sy !== 0) {
-        this.setDirection(sy > 0 ? 8 : 2);
-    }
+		this.setDirection(sx > 0 ? 4 : 6);
+	} else if (sy !== 0) {
+		this.setDirection(sy > 0 ? 8 : 2);
+	}
 };
 
 // New method
 Game_Character.prototype.moveTowardPosition = function(target_x, target_y) {
-    var sx = this.deltaXFrom(target_x);
-    var sy = this.deltaYFrom(target_y);
-    if (Math.abs(sx) > Math.abs(sy)) {
-        this.moveStraight(sx > 0 ? 4 : 6);
-        if (!this.isMovementSucceeded() && sy !== 0) {
-            this.moveStraight(sy > 0 ? 8 : 2);
-        }
-    } else if (sy !== 0) {
-        this.moveStraight(sy > 0 ? 8 : 2);
-        if (!this.isMovementSucceeded() && sx !== 0) {
-            this.moveStraight(sx > 0 ? 4 : 6);
-        }
-    }
+	var sx = this.deltaXFrom(target_x);
+	var sy = this.deltaYFrom(target_y);
+	if (Math.abs(sx) > Math.abs(sy)) {
+		this.moveStraight(sx > 0 ? 4 : 6);
+		if (!this.isMovementSucceeded() && sy !== 0) {
+			this.moveStraight(sy > 0 ? 8 : 2);
+		}
+	} else if (sy !== 0) {
+		this.moveStraight(sy > 0 ? 8 : 2);
+		if (!this.isMovementSucceeded() && sx !== 0) {
+			this.moveStraight(sx > 0 ? 4 : 6);
+		}
+	}
 };
 
 // New method
@@ -1102,73 +1235,45 @@ Game_Character.prototype.path = function(target_x, target_y) {
 // New method
 // This method is modeled on the Game_Player.executeMove function.
 Game_Character.prototype.executeMove = function(direction) {
-    this.moveStraight(direction);
+	this.moveStraight(direction);
 };
 
 //=============================================================================
 // Game_Player
 //=============================================================================
 
-// Replacement method
-Game_Player.prototype.jump = function(xPlus, yPlus) {
-    Game_Character.prototype.jump.call(this, xPlus, yPlus);
-	if (!this._followers._stopChase) {
-		this._followers.jumpAll();
-	}
-};
-
-// New method
-Game_Player.prototype.setOpacity = function(opacity) {
-    this._opacity = opacity;
-	if(!this._followers._stopChase) {
-		this._followers.setOpacityAll(opacity);
-	}
-};
-
 // New method
 Game_Player.prototype.setStepAnime = function(stepAnime) {
-    this._stepAnime = stepAnime;
-	if(!this._followers._stopChase) {
-		this._followers.setStepAnimeAll(stepAnime);
-	}
+	this._stepAnime = stepAnime;
+	this._followers.setStepAnimeAll(stepAnime);
 };
 
 // New method
 Game_Player.prototype.setDirectionFix = function(directionFix) {
-    this._directionFix = directionFix;
-	if(!this._followers._stopChase) {
-		this._followers.setDirectionFixAll(directionFix);
-	}
+	this._directionFix = directionFix;
+	this._followers.setDirectionFixAll(directionFix);
 };
 
 // New method
 Game_Player.prototype.setTransparent = function(transparent) {
-    this._transparent = transparent;
-	if(!this._followers._stopChase) {
-		this._followers.setTransparentAll(transparent);
-	}
+	this._transparent = transparent;
+	this._followers.setTransparentAll(transparent);
 };
 
 // New method
 Game_Player.prototype.setWalkAnime = function(walkAnime) {
-    this._walkAnime = walkAnime;
-	if(!this._followers._stopChase) {
-		this._followers.setWalkAnimeAll(walkAnime);
-	}
+	this._walkAnime = walkAnime;
+	this._followers.setWalkAnimeAll(walkAnime);
 };
 
 // New method
 Game_Player.prototype.setBlendMode = function(blendMode) {
-    this._blendMode = blendMode;
-	if(!this._followers._stopChase) {
-		this._followers.setBlendModeAll(blendMode);
-	}
+	this._blendMode = blendMode;
+	this._followers.setBlendModeAll(blendMode);
 };
 
 // New method
 Game_Player.prototype.setMoveSpeed = function(moveSpeed) {
-    this._moveSpeed = moveSpeed;
-	if(!this._followers._stopChase) {
-		this._followers.setMoveSpeedAll(moveSpeed);
-	}
+	this._moveSpeed = moveSpeed;
+	this._followers.setMoveSpeedAll(moveSpeed);
 };
