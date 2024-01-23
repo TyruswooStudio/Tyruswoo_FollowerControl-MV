@@ -37,7 +37,7 @@ var Tyruswoo = Tyruswoo || {};
 Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
 
 /*:
- * @plugindesc MV v3.1.0 Allows control of party follower movement, balloon icons, animations, and transfers.
+ * @plugindesc MV v3.1.1 Allows control of party follower movement, balloon icons, animations, and transfers.
  * @author Tyruswoo and McKathlin
  *
  * @param Max Party Members
@@ -90,6 +90,7 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *                                 //   since we used "Follower StopChase".
  * Plugin Command: Follower Chase  // * Resets follower behavior, so they
  *                                 //   chase the leader again.
+ * Plugin Command: Follower Chase current //
  * ===========================================================================
  * Details of Plugin Commands to target a follower instead of the leader
  * for Set Move Route, Show Balloon Icon, Show Animation, or Transfer Player
@@ -533,6 +534,10 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *         The Chase and StopChase plugin commands can now target individual
  *         followers.
  * 
+ * v3.1.1  In Development
+ *         Fixed bug where Gather Followers command made the game get stuck
+ *         if any followers weren't chasing. Now Gather Followers automatically
+ *         makes all party members chase.
  * ============================================================================
  * MIT License
  *
@@ -960,6 +965,16 @@ Game_Followers.prototype.updateMove = function() {
 		var precedingCharacter = (i > 0 ? chaseList[i - 1] : $gamePlayer);
 		chaseList[i].chaseCharacter(precedingCharacter);
 	}
+};
+
+// Alias method
+// Resume chase before gathering.
+// This prevents getting stuck waiting for gathering that won't happen.
+Tyruswoo.FollowerControl.Game_Followers_gather =
+	Game_Followers.prototype.gather;
+Game_Followers.prototype.gather = function() {
+	this.chase();
+	Tyruswoo.FollowerControl.Game_Followers_gather.call(this);
 };
 
 // Replacement method

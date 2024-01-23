@@ -480,3 +480,8 @@ v3.0.1 - September 7, 2023
 v3.1.0 - January 18, 2024
 - The Chase and StopChase plugin commands can now target individual
   followers.
+
+v3.1.1 - In Development
+- Fixed bug where Gather Followers command made the game get stuck
+  if any followers weren't chasing. Now Gather Followers automatically
+  makes all party members chase.
