@@ -258,6 +258,8 @@ Tyruswoo.FollowerControl = Tyruswoo.FollowerControl || {};
  *      Chase False    chase false    CHASE FALSE
  *      Chase Stop     chase stop     CHASE STOP
  * ===========================================================================
+ * Visit Tyruswoo.com to ask for help, donate, or browse more of our plugins.
+ * ===========================================================================
  * v1.00  January 17, 2016:
  *        Created the plugin and added the following features:
  *        - Plugin command "Follower" to select followers.
