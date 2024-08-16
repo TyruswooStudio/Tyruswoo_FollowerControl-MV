@@ -366,6 +366,8 @@ Examples of basic pathfinding that does not avoid obstacles:
 Remember that each script call moves the character only one tile,
 i.e. only one step.
 
+### Visit [**Tyruswoo.com**](https://www.tyruswoo.com) to [ask for help](https://www.tyruswoo.com/contact-us/), [donate](https://www.tyruswoo.com/donate/), or browse more of our [plugins](https://www.tyruswoo.com/downloads/rpg-maker-plugin-downloads/).
+
 ## Version History
 
 v1.00 - January 17, 2016:
